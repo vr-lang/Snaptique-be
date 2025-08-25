@@ -5,11 +5,13 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 const {otpRouter} = require('./Routes/otpRoutes.js')
+const {authRouter} = require('./Routes/authRoutes.js')
 
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api", otpRouter)
+app.use("/api", authRouter)
 
 mongoose.connect(process.env.mongo_url)
 .then(() =>{

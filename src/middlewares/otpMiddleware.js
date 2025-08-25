@@ -6,7 +6,6 @@ const otpLimiter = rateLimit({
     message : {"error" : "Too many requests, please try again 2 minutes."}
 })
 
-
 module.exports = {
     otpLimiter
 }
