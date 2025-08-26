@@ -1,1 +1,1 @@
-Sanptique is a social media websitr
+Sanptique is a social media website
