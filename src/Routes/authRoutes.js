@@ -70,6 +70,9 @@ router.post('/auth/signin' , async(req,res) =>{
     console.log(foundUser)
 })
 
+router.post('/auth/logout',async(req,res) =>{
+    res.status(200).cookie("jwt-token", null).json({"msg" : "User logged Out"})
+})
 
 
 module.exports = {
