@@ -88,6 +88,10 @@ const userSchema = new mongoose.Schema({
         minlength : 4,
         trim : true
     },
+    posts:[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Post"
+    }],
     profilePicture : {
         type : String
     },
