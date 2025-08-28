@@ -4,7 +4,7 @@ const { isLoggedIn } = require('../middlewares/isLoggesIn')
 const { isAuthor } = require('../middlewares/isAuthor')
 const router = express.Router()
 
-router.post('/posts/create',isLoggedIn , async(req , res) =>{
+router.post('/posts/create',isLoggedIn,async(req , res) =>{
     try {
         const{caption , location  , media } = req.body
         if(!media){
@@ -55,7 +55,19 @@ router.delete('/posts/delete/:id' , isLoggedIn,isAuthor , async(req,res) =>{
     }
 })
 
-
+router.patch('/posts/:id' , isLoggedIn ,isAuthor, async(req,res) =>{
+    try {
+        const{id} = req.params
+        const{caption,location} = req.body
+        const updatedPost = await Post.findByIdAndUpdate(id ,{caption , location} , {returnDocument : 'after'})
+        if(!updatedPost){
+            throw new Error("Post not found")
+        }
+        res.status(200).send({"msg" : "Done" , data : updatedPost})
+    } catch (error) {
+        res.status(400).send({error : error.message})
+    }
+})
 
 module.exports = {
     postsRouter : router

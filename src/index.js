@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser")
 const {otpRouter} = require('./Routes/otpRoutes.js')
 const {authRouter} = require('./Routes/authRoutes.js')
 const {postsRouter} = require('./Routes/postsRoute.js')
+const {followRequestRouter} = require('./Routes/followReqRoutes.js')
 
 app.use(cors())
 app.use(express.json())
@@ -14,6 +15,8 @@ app.use(cookieParser())
 app.use("/api", otpRouter)
 app.use("/api", authRouter)
 app.use("/api", postsRouter)
+app.use("/api", followRequestRouter)
+
 
 mongoose.connect(process.env.mongo_url)
 .then(() =>{

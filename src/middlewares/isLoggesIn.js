@@ -14,7 +14,6 @@ const isLoggedIn = async(req , res,next) =>{
     next()
    } catch (error) {
     res.status(400).send({error : error.message})
-    console.log(error)
    }
 }
 
