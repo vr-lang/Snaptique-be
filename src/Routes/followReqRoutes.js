@@ -71,12 +71,72 @@ router.patch('/follow-requests/review/:id/:status',isLoggedIn,async(req,res) =>{
 
     const senderData = await User.findById(foundReq.fromUserId)
     senderData.following.push(req.User._id)
-    senderData.save()
+    senderData.save() 
 
     res.status(200).json({msg : "done"})
  } catch (error) {
     res.status(400).send({error : error.message})
  }
+})
+
+router.patch("/follow-requests/block/:userId",isLoggedIn , async(req,res) =>{
+    try {
+        const{userId} = req.params
+    if(req.User.blocked.some(id => id.toString() === userId)){
+        throw new Error("User already blocked")
+    }
+
+    const foundUser = await User.findById(userId)
+    if(foundUser.blocked.some(id => id.toString() === req.User._id.toString())){
+        throw new Error("Invalid operation")
+    }
+    req.User.blocked.push(foundUser._id)
+
+    // For the person who got blocked
+    const filteredFollowers = foundUser.followers.filter((item) =>{
+        return item.toString() != req.User._id.toString
+    })
+    foundUser.followers = filteredFollowers
+
+    const filteredFollowing = foundUser.following.filter((item) =>{
+        return item.toString() != req.User._id.toString()
+    })
+    foundUser.following = filteredFollowing
+
+    await foundUser.save()
+   
+    // For the blocker who block another person
+    const filteredFollowersBlocker = req.User.followers.filter((item) =>{
+            return item.toString() != userId
+    })
+    req.User.followers = filteredFollowersBlocker
+
+    const filteredFollowingBlocker = req.User.following.filter((item) =>{
+        return item.toString() != userId
+    })
+    req.User.following = filteredFollowingBlocker
+
+    await req.User.save()
+
+    res.status(200).send({"msg" : `User ${foundUser.userName} has been blocked`})
+    } catch (error) {
+        res.status(400).send({error : error.message})
+    }
+})
+
+router.patch('/follow-requests/unblock/:userId' , isLoggedIn , async(req,res) =>{
+    try {
+    const{userId} = req.params
+    const filteredBlockList = req.User.blocked.filter((item) =>{
+    return item.toString() != userId
+    })
+    req.User.blocked = filteredBlockList
+    await req.User.save()
+
+    res.status(200).send({msg : "User has been unblocked successfully"})
+    } catch (error) {
+    res.status(400).send({error : error.message})
+    }
 })
 
 module.exports ={
